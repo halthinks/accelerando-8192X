@@ -1,8 +1,8 @@
-# Accelerando-8192
+# Accelerando-8192X
 
 **8,192 original glyphs. One reversible tokenizer.**
 
-[Explore the live site](https://gillverd.github.io/accelerando-8192/)
+[View the original live demo](https://gillverd.github.io/accelerando-8192/) · [Fork source](https://github.com/halthinks/accelerando-8192X)
 
 An angular, mint-green alien alphabet paired with a custom 8,192-entry byte-pair tokenizer. The site includes a searchable character archive, a local browser encoder and decoder, an Accelerando specimen, and downloadable fonts, atlases, and reproducible tokenizer data.
 
@@ -30,15 +30,20 @@ The transmission studio also decodes copied Accelerando-8192 glyphs. Whitespace 
 ## Verify
 
 ```sh
+node tests/verify.mjs
+
+# Or run each suite independently:
+node tests/integrity.test.mjs
 node tests/tokenizer.test.mjs
 node tests/decoder.test.mjs
+node tests/unicode-input.test.mjs
 ```
 
 The browser tokenizer is compared with reference outputs from the Python tiktoken implementation, including the complete song and multilingual/whitespace cases. Decoder tests cover copied and wrapped streams, invalid glyphs and token IDs, UTF-8 byte fragments, and preservation of leading byte-order marks. The downloadable full package also includes the Python encoder and decoder.
 
 ## Publish
 
-GitHub Pages serves the `docs/` directory on the `main` branch. All asset paths are relative so the site works under a project URL.
+This fork keeps a Pages-ready static site in the docs/ directory. GitHub Pages publication must be configured for this fork (main → /docs) and checked before advertising a fork deployment. All asset paths are relative so the site works under a project URL. The demo above is the original upstream site, not proof of a deployed fork.
 
 ## Files
 
@@ -47,6 +52,17 @@ GitHub Pages serves the `docs/` directory on the `main` branch. All asset paths 
 - `docs/data/alphabet.json`: complete byte vocabulary, glyph geometry, and song token sequence.
 - `docs/downloads/`: full project, four PNGs, vector atlas, tokenizer settings.
 - `docs/assets/`: font, specimen images, and social artwork.
+
+## Fork maintenance
+
+This fork preserves the original work and brings in two upstream, contributor-authored fixes, both merged on October 11, 2026:
+
+- [Unicode contraction parity](https://github.com/halthinks/accelerando-8192X/pull/1) — from [upstream PR #1](https://github.com/gillverd/accelerando-8192/pull/1).
+- [Browser glyph decoder](https://github.com/halthinks/accelerando-8192X/pull/2) — from [upstream PR #2](https://github.com/gillverd/accelerando-8192/pull/2).
+
+The dependency-free Node verification command tests the reference BPE streams, decoding, malformed UTF-16 handling, Unicode behavior, and the geometric/byte-vocabulary invariants. It is suitable for native CI runners; no hosted GitHub Actions pipeline is required.
+
+**Licensing caution:** The upstream repository does not currently declare a license covering its original source, glyph shapes, font, or images. THIRD_PARTY_NOTICES.txt acknowledges the MIT-licensed tokenizer dependency but does not relicense original material. Preserve upstream credit and history; obtain explicit rights clarification before independent redistribution outside the GitHub fork workflow or assigning a license to those components.
 
 ## Attribution
 

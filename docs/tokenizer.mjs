@@ -1,3 +1,17 @@
+// TextEncoder replaces lone UTF-16 surrogates with U+FFFD; reject instead of
+// silently creating a non-reversible transmission.
+function assertWellFormedUTF16(text) {
+ for(let i=0;i<text.length;i++){
+  const code=text.charCodeAt(i);
+  if(code>=0xD800&&code<=0xDBFF){
+   const next=text.charCodeAt(i+1);
+   if(!(next>=0xDC00&&next<=0xDFFF))throw Error('Unpaired UTF-16 surrogate at character '+(i+1)+'.');
+   i++;
+  }else if(code>=0xDC00&&code<=0xDFFF){
+   throw Error('Unpaired UTF-16 surrogate at character '+(i+1)+'.');
+  }
+ }
+}
 export class GlyphTokenizer {
  constructor(data){
   this.bytes=data.tokens.map(t=>Uint8Array.from(atob(t[0]),c=>c.charCodeAt(0)));
@@ -8,6 +22,7 @@ export class GlyphTokenizer {
   this.pattern=new RegExp(pattern,'gu');this.encoder=new TextEncoder();this.decoder=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true});
  }
  encode(text){
+  assertWellFormedUTF16(text);
   const ids=[];this.pattern.lastIndex=0;const pieces=[...text.matchAll(this.pattern)].map(x=>x[0]);
   if(pieces.join('')!==text)throw Error('Input could not be segmented without loss.');
   for(const piece of pieces){
