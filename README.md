@@ -50,7 +50,7 @@ This fork keeps a Pages-ready static site in the docs/ directory. GitHub Pages p
 - `docs/index.html`, `style.css`, `app.mjs`: site and interactions.
 - `docs/tokenizer.mjs`: browser BPE implementation.
 - `docs/data/alphabet.json`: complete byte vocabulary, glyph geometry, and song token sequence.
-- `docs/downloads/`: full project, four PNGs, vector atlas, tokenizer settings.
+- `docs/downloads/`: original upstream bundled archive (legacy snapshot predating fork repairs), four PNGs, vector atlas, tokenizer settings. Use the current fork GitHub source for up-to-date JavaScript and tests.
 - `docs/assets/`: font, specimen images, and social artwork.
 
 ## Fork maintenance
@@ -61,6 +61,8 @@ This fork preserves the original work and brings in two upstream, contributor-au
 - [Browser glyph decoder](https://github.com/halthinks/accelerando-8192X/pull/2) — from [upstream PR #2](https://github.com/gillverd/accelerando-8192/pull/2).
 
 The dependency-free Node verification command tests the reference BPE streams, decoding, malformed UTF-16 handling, Unicode behavior, and the geometric/byte-vocabulary invariants. It is suitable for native CI runners; no hosted GitHub Actions pipeline is required.
+
+See [REPAIR_ROADMAP.md](REPAIR_ROADMAP.md) for remaining acceptance gates, current verification evidence, and licensing provenance.
 
 **Licensing caution:** The upstream repository does not currently declare a license covering its original source, glyph shapes, font, or images. THIRD_PARTY_NOTICES.txt acknowledges the MIT-licensed tokenizer dependency but does not relicense original material. Preserve upstream credit and history; obtain explicit rights clarification before independent redistribution outside the GitHub fork workflow or assigning a license to those components.
 
