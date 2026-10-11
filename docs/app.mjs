@@ -19,7 +19,31 @@ function renderEncoded(){const area=$('#encoded');area.replaceChildren();if(!cur
  const visible=currentIds.slice(0,1200);if(tokenView){for(const id of visible){const b=document.createElement('button');b.className='token-chip';b.setAttribute('aria-label',`Token ${id}: ${data.tokens[id][1]}`);const g=document.createElement('span'),label=document.createElement('small');g.textContent=char(id);label.textContent=data.tokens[id][1];b.append(g,label);b.addEventListener('click',()=>openGlyph(id));area.append(b);}}else{const s=document.createElement('span');s.className='glyph-run';s.textContent=visible.map(char).join('');area.append(s);}
  if(currentIds.length>visible.length){const p=document.createElement('p');p.className='loading';p.textContent='Preview shows the first 1,200 glyphs. Copy and SVG export include the full transmission.';area.append(p);}
 }
-function encode(){if(!tokenizer)return;const input=$('#source-text').value;$('#character-count').textContent=`${input.length} / 2000`;try{currentIds=tokenizer.encode(input);const matches=tokenizer.decode(currentIds)===input;$('#token-stats').textContent=`${currentIds.length} tokens / ${new Set(currentIds).size} unique`;$('#roundtrip').textContent=matches?'✓ Verified: decodes to your exact text.':'Text includes an unsupported Unicode sequence.';$('#roundtrip').classList.toggle('error',!matches);renderEncoded();}catch(e){$('#roundtrip').textContent=e.message;$('#roundtrip').classList.add('error');}}
+function encode(){
+ if(!tokenizer)return;
+ const input=$('#source-text').value;
+ $('#character-count').textContent=input.length+' / 2000';
+ // Always invalidate a previous transmission before processing new input.
+ currentIds=[];
+ $('#copy-transmission').disabled=true;
+ $('#save-transmission').disabled=true;
+ try{
+  const ids=tokenizer.encode(input);
+  if(tokenizer.decode(ids)!==input)throw Error('Input could not be encoded reversibly.');
+  currentIds=ids;
+  $('#token-stats').textContent=ids.length+' tokens / '+new Set(ids).size+' unique';
+  $('#roundtrip').textContent='✓ Verified: decodes to your exact text.';
+  $('#roundtrip').classList.remove('error');
+  renderEncoded();
+  $('#copy-transmission').disabled=false;
+  $('#save-transmission').disabled=false;
+ }catch(error){
+  $('#token-stats').textContent='No valid transmission';
+  $('#roundtrip').textContent=error.message;
+  $('#roundtrip').classList.add('error');
+  renderEncoded();
+ }
+}
 function decodeTransmission(){
  if(!tokenizer)return;
  // Clear the previous result before validating a new transmission.
